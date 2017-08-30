@@ -3,7 +3,6 @@ package token
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/SermoDigital/jose/crypto"
@@ -22,32 +21,11 @@ type TokenResponse struct {
 	Token string `json:"token"`
 }
 
-func GetTokenHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter,
-		r *http.Request) {
-		bytes, _ := ioutil.ReadFile(mySigningKey)
-		// create claims
-		claims := jws.Claims{}
-		// set params for token
-		claims.SetSubject(TOKEN_ISSUER)
-		claims.SetIssuer(TOKEN_SUBJECT)
-		claims.SetExpiration(time.Now().Add(time.Hour * 24))
-		claims.SetJWTID(TOKEN_JWT_ID)
-		// signed token of secure string
-		rsaPrivate, _ := crypto.ParseRSAPrivateKeyFromPEM(bytes)
-		token := jws.NewJWT(claims, crypto.SigningMethodRS256)
-		serializedToken, _ := token.Serialize(rsaPrivate)
-
-		// response
-		w.Write(serializedToken)
-	})
-}
-
-func GenerateToken(w http.ResponseWriter, r *http.Request) {
+func GenerateToken() []byte {
 	var token TokenResponse
 	token.Token = string(tokenGen()[:])
 	data, _ := json.Marshal(token)
-	w.Write(data)
+	return data
 }
 
 func tokenGen() []byte {

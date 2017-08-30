@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	USERNAME = "username"
+	USERNAME = "username@user.com"
 	PASSWORD = "password"
 )
 
@@ -65,7 +65,8 @@ func LoginHandler() http.Handler {
 		}
 		json.Unmarshal(body, &users)
 		if users.Username == USERNAME && users.Password == PASSWORD {
-			token.GenerateToken(w, r)
+			generetedToken := token.GenerateToken()
+			w.Write(generetedToken)
 		}
 	})
 }

@@ -1,10 +1,10 @@
-const post = (url, body) => {
+async function post (url, body) {
     const headers = {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type':     'application/json',
         'Accept':           'application/json',
     };
-    return fetch(
+    const response = await fetch(
         url,
         {
             method: 'post',
@@ -14,6 +14,7 @@ const post = (url, body) => {
             body: JSON.stringify(body)
         }
     );
+    return await response.json();
 };
 
 
@@ -27,9 +28,8 @@ const init = () => {
         const password = inputPassword.value;
         const body = { username, password };
         post(url, body)
-            .then(response => {
-                console.log(response.json().then(data => console.log(data)));
-            })
+            .then(data => console.log(data))
+            .catch(reason => console.log(reason.message))
     });
 };
 
